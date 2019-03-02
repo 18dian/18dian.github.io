@@ -3,6 +3,9 @@
   <entry>
     <title><![CDATA[hexo搭建博客]]></title>
     <url>%2F2019%2F03%2F02%2Fhexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%2F</url>
-    <content type="text"></content>
+    <content type="text"><![CDATA[1、搜索node官网安装node，安装成功打开命令行（window快捷键window+R），输入node -v和npm -v，出现版本号即为成功；2、安装git，安装成功右键桌面会有GIT BUSH Here和GIT GUI Here，同样，命令行输入git –version出现版本号即为成功；3、在github账号上创建一个repositories，项目必须要遵守格式：账户名.github.io，勾选Initialize this repository with a README，description可写可不写；4、安装hexo，命令行输入：npm install hexo -ghexo -v 检查是否安装成功5、接下来我在D盘创建了一个blog文件夹，cd到这个文件夹，执行hexo init，初始化该文件夹，成功后命令行会出现“Start blogging with Hexo”；6、接下来npm install，安装所需的组件；7、hexo g （hexo generate简写） 初次体验hexo；8、hexo s（hexo server简写）启动服务器，如果端口号被占用，输入“hexo server -p 端口号”改变端口号；出现下图即成功；博客搭建完成，但是如果想要好看的话，还需要下载主题并配置主题，个人比较喜欢next主题。]]></content>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
   </entry>
 </search>
