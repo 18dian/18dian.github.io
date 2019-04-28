@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[this]]></title>
+    <url>%2F2019%2F04%2F28%2Fthis%2F</url>
+    <content type="text"><![CDATA[关于javascript中的this，已经有很多篇文章对它进行过阐述，他们写的都很好，本篇仅作为《你不知道的javascript》关于this的读后感总结。 this和动态作用域很像，相信熟悉动态作用域的开发者应该更容易理解this，但是javascript是基于词法作用域，所以这对我们理解this造成了很多的误解。 this的绑定和函数声明的位置没有任何关系，this是在调用时被绑定的，在javascript中，有四种调用函数的方式： 1、作为普通函数调用；2、作为对象方法调用；3、构造函数调用；4、call()和apply(); 作为普通函数调用123456function foo() &#123; var a = 2; console.log(this.a)&#125;foo() //undefined 此时，foo的调用位置在全局作用域，它的this指向window对象，有一点需要注意：在严格模式下运行foo，this指向undefined，但是在严格模式下调用foo，this还是会指向window。 123456function foo() &#123; &quot;use strict&quot; console.log(this.a)&#125;var a = 3;foo() //TypeError:this is undefined 12345678function foo() &#123; console.log(this.a)&#125;var a = 3;(function()&#123; &quot;use strict&quot; foo()&#125;)() //3 作为对象方法调用1234567891011function foo() &#123; var a = 2; console.log(this.a)&#125;let obj = &#123; a: 3, foo&#125;obj.foo() //3 此时，foo的调用位置存在一个obj的上下文对象，this指向这个上下文对象，下面看另一段代码： 12345678910111213function foo() &#123; function bar() &#123; console.log(this.a) &#125; return bar();&#125;let obj = &#123; a: 3, foo&#125;obj.foo() //undefined 在没有输出结果之前，很容易会理所当然的认为输出3，因为我们把内部函数的this看成是和外部函数的this一样，但其实，内部函数的上下文环境取决于调用环境，而不是外部函数的上下文环境。 陷阱1： 123456789101112function foo() &#123; console.log(this.a)&#125;;let obj2 = &#123; a: 4, foo: foo&#125;;let obj1 = &#123; a: 3, obj2: obj2&#125;;obj1.obj2.foo() //4 根据打印结果，也能知道this是指向obj2，对象属性引用链中只有最后一层在调用位置中起作用。 陷阱2： 12345678910function foo() &#123; console.log(this.a)&#125;let obj = &#123; a: 3, foo&#125;let bar = obj.foo;bar() //undefined 在这里，bar变量保存了对obj.foo的一个引用，但是实际上，它指向的是foo函数本身，所以，调用bar，等同于直接调用全局作用域中的foo，所以，this指向window。 陷阱3：回调函数 1234567891011function foo() &#123; console.log(this.a)&#125;;function bar(fn) &#123; fn()&#125;;let obj = &#123; a: 3, foo&#125;bar(obj.foo) //undefined 参数传递其实就是一种隐性赋值，所以和陷阱2道理是一样的，只是这个更具有迷惑性。 构造函数调用构造函数调用必须带有new，首先要知道使用new来调用函数时，都发生了哪些事情？ 1、创建一个新对象，var obj = {};2、设置新对象的proto属性指向构造函数的prototype对象，obj.proto = Foo.prototype;3、函数中的this被绑定到新对象，Foo.call(obj);4、如果函数没有返回其他对象，则返回这个新对象； 所以，构造函数的this会绑定到新创建的对象上。 call和apply不多说了。]]></content>
+      <tags>
+        <tag>JS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[JS作用域]]></title>
-    <url>%2F2019%2F04%2F26%2F%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8Cthis%2F</url>
+    <url>%2F2019%2F04%2F26%2FJS%E4%BD%9C%E7%94%A8%E5%9F%9F%2F</url>
     <content type="text"><![CDATA[最近在读《你不知道的javascript》，作者很幽默，写的东西很容易让人理解，俗话说好记性不如烂笔头，很多知识当时理解，过一段时间就会忘记，记录在这里，既可以巩固学到的知识，又可以在日后忘记的时候回来看一眼。 理解作用域计算机最基本的功能是对数据进行存储和读取，而在javascript中，作用域相当于一套规则，用来保存和读取在写代码过程中定义的那些值，将它们保存在一定的范围内。如果查找的目的是对变量赋值，就会使用LHS查询，如果查找的目的是找到变量的值，则会使用RHS查询。 作用域嵌套作用域之间会有嵌套，代码如下： 123456function foo(a) &#123; var b = 2; function bar() &#123; console.log(a+b) &#125;&#125; 在全局作用域中只有一个foo，在foo作用域中，还有一个bar作用域，在bar作用域中并没有变量a和变量b，代码在执行时，会创建作用域链，引擎会从当前的作用域中查找变量，找不到，就会向上一层继续找，当找到全局作用域还没找到，查找过程便会停止。 词法作用域和动态作用域词法作用域和动态作用域的区别：词法作用域又称静态作用域，因为它是在写代码或定义时确定的，它关注函数在何处声明；动态作用域时在运行时确定的，它关注函数在何处调用； 到这里，我会思考如何证明js是基于词法作用域，代码如下： 123456789101112function foo () &#123; console.log(a)&#125;var a = 2;function bar () &#123; var a = 3; foo()&#125;bar() //2 如果想看动态作用域的效果，可以在自己电脑装一个虚拟机，然后装一个deepin系统，创建个文本文件，输入命令”mv test.txt test.bash”(我不知道怎么直接创建.bash文件，所以创建一个txt文件然后用命令行更改的)，然后输入”chmod u+x test.bash”(这个是加运行权限)，在命令行里输入”./test.bash”(运行文件)，你就会看到打印出来的3，代码如下： 123456789a=2function foo () &#123; echo $a;&#125;function bar () &#123; local a=3; foo;&#125;bar 声明提升在编译阶段，所有声明都会在代码被执行前首先被处理。除了函数作用域，ES6还增加了块作用域，用let和const声明的变量，可以隐性的劫持所在的块作用域，但是要注意，用let和const声明的变量不存在声明提升。 闭包结合小红书，个人的总结是：一个函数，保存了对另一个函数作用域的引用，导致垃圾回收机制无法清除，这时，就产生了闭包。 12345678910function foo() &#123; var a = 2; function baz() &#123; console.log(a) &#125; bar(baz)&#125;function bar(fn) &#123; fn();&#125; 这里，foo和bar都是在全局作用域中的函数，其中，foo函数作用域包含baz函数作用域，根据作用域查找规则，在foo中调用的bar函数实际上就是全局作用域中的bar，而这里将baz作为bar的实参传给了bar，因此，bar持有对参数baz的引用，这就产生了闭包。]]></content>
+      <tags>
+        <tag>JS</tag>
+      </tags>
   </entry>
   <entry>
     <title><![CDATA[hexo搭建博客]]></title>
